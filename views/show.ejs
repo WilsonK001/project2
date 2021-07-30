@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <title>Hotels</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<!--Import Google Icon Font-->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!-- Compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <style>
+        .card-header {
+            font-weight: bold;
+        }
+
+        .col-md-12 p:nth-of-type(6) {
+            font-weight: bold;
+            color: black;
+            display: inline-block;
+        }
+
+        body {
+            cursor: auto;
+            
+            background-image: url('https://images.unsplash.com/photo-1522441815192-d9f04eb0615c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2964&q=80');
+            background-size: cover;
+            
+        }
+
+.share-btn-container {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.share-btn-container a i {
+  font-size: 32px;
+}
+
+.share-btn-container a {
+  margin: 12px 0;
+  transition: 500ms;
+}
+
+.share-btn-container a:hover {
+  transform: scale(1.2);
+}
+
+.share-btn-container .fa-facebook {
+  color: #3b5998;
+}
+
+.share-btn-container .fa-twitter {
+  color: #1da1f2;
+}
+
+.share-btn-container .fa-linkedin {
+  color: #0077b5;
+}
+
+.share-btn-container .fa-github {
+    color: black;
+}
+
+
+
+@media (max-width: 550px) {
+  .content {
+    padding: 8px 32px;
+  }
+
+  .share-btn-container {
+    transform: unset;
+    top: unset;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    flex-direction: row;
+    box-shadow: 4px 0 8px rgba(0, 0, 0, 0.3);
+    padding: 16px 0;
+    justify-content: center;
+  }
+
+  .share-btn-container a {
+    margin: 0 32px;
+  }
+}
+
+.carousel .carousel-item {
+    min-width: 500px !important;
+}
+
+.float-right {
+    float: right;
+}
+
+
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body>
+
+    <nav>
+        <%- include ('./partials/nav.ejs') %>
+    </nav>
+
+
+    <div class="container">
+        <button class="float-right btn" onclick="location.href='/hotels'">Back</button></h1>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="text-center"><b>
+                        <%=hotel.name%>
+                    </b></h3>
+                <p><b>Location</b>: <%=hotel.location%>
+                </p>
+                <p><b>Rating</b>: <%=hotel.rating%>⭐️⭐️⭐️⭐️⭐️
+                </p>
+                <p><b>Description</b>: <%=hotel.description%>
+                </p>
+                <p><b>Room Number</b>: <%=hotel.rooms[0].roomNumber%>
+                </p>
+                <p><b>Size</b>: <%=hotel.rooms[0].size%>
+                </p>
+                <% if (currentUser) { %>
+                    <p>Price:<b>
+                            <p style="color: red; display: inline-block;"><span style="text-decoration: line-through;">
+                                    <%=hotel.rooms[0].price%>
+                                </span></p> $<%=(hotel.rooms[0].price*0.95)%>
+                    </p>
+                    </p></b>
+                    <% } else { %>
+                        <p><b>Price</b>: $<%=hotel.rooms[0].price%></b></p>
+
+                        <% } %>
+
+                            <%if (hotel.rooms[0].availability===true) { %>
+                                <form action="/hotels/<%=hotel._id%>/reserve?_method=PUT" method="POST">
+                                    <input type="hidden" name="_id" value="<%=hotel._index%>">
+                                    <input type="hidden" name="availability" value="<%=false%>">
+                                    <input class="btn" type="submit" value="Reserve" />
+                                </form>
+
+                             
+
+                                <p><b>Available</b></p>
+                                <% } else { %>
+                                    <p><b>Sold Out</b></p>
+                                    <% } %>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s12">
+                <div class="carousel" id="roomCarousel">
+
+                    <!----Loop through the rooms and display their image-->
+                    <% for(let i=0; i < hotel.rooms[0].img.length; i++) { %>
+                        <a class="carousel-item" href="#"><img class="img-responsive" src="<%=hotel.rooms[0].img[i]%>" alt=""></a>
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-outline-primary" onclick="location.href='/hotels/<%=hotel._id%>/edit'">Edit</a></button>
+        <button class="btn red" onclick="location.href='/hotels/<%hotel._id%>'">Delete</a></button>
+
+
+
+    </div>
+    <div class="share-btn-container">
+        <a href="https://www.facebook.com/" class="fa fa-facebook"></a>
+        <a href="https://twitter.com/" class="fa fa-twitter"></a>
+        <a href="https://www.linkedin.com/" class="fa fa-linkedin"></a>
+        <a href="https://github.com/" class="fa fa-github"></a>
+
+    </div>
+</body>
+<script>
+    $(document).ready(function() {
+        $('#roomCarousel').carousel()
+    })
+    setInterval(function() {
+    $('#roomCarousel').carousel('next');
+  }, 1500);
+</script>
+</html>
